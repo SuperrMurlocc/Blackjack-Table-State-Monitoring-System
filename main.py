@@ -1,6 +1,6 @@
-# peri = cv2.arcLength(c,True)
-# approx = cv2.approxPolyDP(c,0.01*peri,True)
-# pts = np.float32(approx)
+peri = cv2.arcLength(c,True)
+approx = cv2.approxPolyDP(c,0.01*peri,True)
+pts = np.float32(approx)
 
 def flattener(image, pts, w, h):
     """Flattens an image of a card into a top-down 200x300 perspective.
