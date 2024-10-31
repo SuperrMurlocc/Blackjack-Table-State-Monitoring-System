@@ -234,7 +234,7 @@ class Vision:
                     Transforms.resize((200, 300)),
                 ], transformed, log_level=self.log_level)
 
-                gray_transformed_corner = gray_transformed[0:84, 0:32]
+                gray_transformed_corner = gray_transformed[0:84, 6:32+6]
 
                 if self.log_level == 'ALL':
                     self.imshow(gray_transformed_corner)
