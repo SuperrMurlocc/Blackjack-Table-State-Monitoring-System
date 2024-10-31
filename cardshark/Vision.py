@@ -4,7 +4,7 @@ import numpy as np
 import einops
 from typing import Callable, Literal
 
-from .utils import get_lines_intersection, four_point_transform
+from .utils import get_lines_intersection, four_point_transform, count_points
 from .match_template import get_templates_matches, get_best_template, print_template_matches_table, name_to_sign
 
 
@@ -77,16 +77,43 @@ class Vision:
 
             display = self.base_image.copy()
 
-            for pile_contour, pile_contents, card_contours in zip(self.pile_contours, self.piles_contents, self.cards_contours):
+            for pile_contour, card_contours in zip(self.pile_contours, self.cards_contours):
                 cv2.drawContours(display, [pile_contour], 0, (0, 255, 0), 22)
-
-                x, y, w, h = cv2.boundingRect(pile_contour)
-                cv2.putText(display, ', '. join(pile_contents), (x + w // 2, y + h + 100), 0, 3.,(0, 0, 0), 11)
 
                 for card_contour in card_contours:
                     rect = cv2.minAreaRect(card_contour)
                     box = np.int32(cv2.boxPoints(rect))
                     cv2.drawContours(display, [box], 0, (0, 0, 255), 11)
+
+            self.imshow(display)
+
+            display = self.base_image.copy()
+
+            points_x_y_w_h = []
+            for pile_contour, pile_contents in zip(self.pile_contours, self.piles_contents):
+                x, y, w, h = cv2.boundingRect(pile_contour)
+                cv2.putText(display, ', '.join(pile_contents), (x + w // 2, y + h + 100), 0, 3., (0, 0, 0), 11)
+                points = count_points(pile_contents)
+                cv2.putText(display, f'{points} points', (x + w // 2, y + h + 200), 0, 3.,(0, 0, 0), 5)
+
+                points_x_y_w_h.append([points, x, y, w, h])
+
+            points_x_y_w_h = sorted(points_x_y_w_h, key=lambda x: x[2])
+            croupier_points =points_x_y_w_h[0][0]
+
+            if game_finished := (croupier_points >= 17):
+                _, x, y, w, h = points_x_y_w_h[0]
+                cv2.putText(display, f'Game finished!', (x + w // 2, y - 100), 0, 3., (0, 0, 0), 11)
+            else:
+                _, x, y, w, h = points_x_y_w_h[0]
+                cv2.putText(display, f'Game in progres...', (x + w // 2, y - 100), 0, 3.,(0, 0, 0), 11)
+
+            for points, x, y, w, h in points_x_y_w_h[1:]:
+                if points > 21:
+                    cv2.putText(display, f'Busted!', (x + w // 2, y - 100), 0, 3., (0, 0, 0), 11)
+                elif game_finished:
+                    cv2.putText(display, 'Win' if points > croupier_points else 'Draw' if points == croupier_points else 'Loss', (x + w // 2, y - 100), 0, 3., (0, 0, 0), 11)
+
 
             self.imshow(display)
 
