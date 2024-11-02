@@ -93,7 +93,7 @@ def count_points(ranks):
         if rank != 'A':
             value += rank_to_points[rank]
         else:
-            if value < 10:
+            if value <= 10:
                 value += 11
             else:
                 value += 1

@@ -92,9 +92,9 @@ class Vision:
             points_x_y_w_h = []
             for pile_contour, pile_contents in zip(self.pile_contours, self.piles_contents):
                 x, y, w, h = cv2.boundingRect(pile_contour)
-                cv2.putText(display, ', '.join(pile_contents), (x + w // 2, y + h + 100), 0, 3., (0, 0, 0), 11)
+                cv2.putText(display, ', '.join(pile_contents), (x + w // 2, y + h + 50), 0, 3., (0, 0, 0), 11)
                 points = count_points(pile_contents)
-                cv2.putText(display, f'{points} points', (x + w // 2, y + h + 200), 0, 3.,(0, 0, 0), 5)
+                cv2.putText(display, f'{points} points', (x + w // 2, y + h + 150), 0, 3.,(0, 0, 0), 5)
 
                 points_x_y_w_h.append([points, x, y, w, h])
 
@@ -103,10 +103,10 @@ class Vision:
 
             if game_finished := (croupier_points >= 17):
                 _, x, y, w, h = points_x_y_w_h[0]
-                cv2.putText(display, f'Game finished!', (x + w // 2, y - 100), 0, 3., (0, 0, 0), 11)
+                cv2.putText(display, f'Game finished!', (x + w // 2, y - 50), 0, 3., (0, 0, 0), 11)
             else:
                 _, x, y, w, h = points_x_y_w_h[0]
-                cv2.putText(display, f'Game in progres...', (x + w // 2, y - 100), 0, 3.,(0, 0, 0), 11)
+                cv2.putText(display, f'Game in progres...', (x + w // 2, y - 50), 0, 3.,(0, 0, 0), 11)
 
             for points, x, y, w, h in points_x_y_w_h[1:]:
                 if points > 21:
