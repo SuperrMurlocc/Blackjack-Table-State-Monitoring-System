@@ -63,10 +63,19 @@ class Vision:
                 Vision.imshow(image)
         return image
 
-    def __init__(self, image_path: str, *, cvtColorCode: int = cv2.COLOR_BGR2RGB, log_level: logLevel = 'NONE'):
+    def __init__(self, image_path: str, *, cvtColorCode: int = cv2.COLOR_BGR2RGB, log_level: logLevel = 'NONE', scale: float = 1.):
         self.log_level = log_level
+        self.scale = scale
 
         self.base_image = cv2.cvtColor(cv2.imread(image_path), cvtColorCode)
+
+        if scale != 1.:
+            height, width = self.base_image.shape[:2]
+            new_width = int(width * scale)
+            new_height = int(height * scale)
+
+            self.base_image = cv2.resize(self.base_image, (new_width, new_height), interpolation=cv2.INTER_AREA)
+
         self.areas_image = self.preprocess_image(self.base_image)
         self.pile_contours, self.cards_contours = self.segment_image()
         self.piles_contents = self.analyze_piles_contents()
@@ -114,7 +123,6 @@ class Vision:
                 elif game_finished:
                     cv2.putText(display, 'Win' if points > croupier_points else 'Draw' if points == croupier_points else 'Loss', (x + w // 2, y - 100), 0, 3., (0, 0, 0), 11)
 
-
             self.imshow(display)
 
     def preprocess_image(self, image: imageType) -> imageType:
@@ -145,7 +153,7 @@ class Vision:
 
         for contour in contours:
             area = cv2.contourArea(contour)
-            if area < CARD_MIN_AREA:
+            if area < CARD_MIN_AREA * self.scale ** 2:
                 break
 
             pile_contours.append(contour)
@@ -161,6 +169,11 @@ class Vision:
 
         points = np.array(approx)
         points = einops.rearrange(points, 'n_points 1 coords -> n_points coords')
+
+        top_right_corner = max(points.tolist(), key=lambda point: point[0] - point[1])
+        index = points.tolist().index(top_right_corner)
+
+        points = np.roll(points, -index, axis=0)
 
         if self.log_level == 'ALL':
             for i, point in enumerate(points):
@@ -183,6 +196,7 @@ class Vision:
                 cv2.line(display, point_2_b, intersection, color=(255, 0, 0), thickness=10)
 
         if self.log_level == 'ALL':
+
             self.imshow(display)
 
         return pile_image
@@ -207,7 +221,7 @@ class Vision:
 
         for _contour in _contours:
             area = cv2.contourArea(_contour)
-            if area < CARD_MIN_AREA:
+            if area < CARD_MIN_AREA * self.scale ** 2:
                 break
 
             card_contours.append(_contour + (x, y))
@@ -234,13 +248,13 @@ class Vision:
                     Transforms.resize((200, 300)),
                 ], transformed, log_level=self.log_level)
 
-                gray_transformed_corner = gray_transformed[0:84, 6:32+6]
+                gray_transformed_corner = gray_transformed[0:52, 4:54]
 
                 if self.log_level == 'ALL':
                     self.imshow(gray_transformed_corner)
 
                 binarized_transformed_corner = self.sequential([
-                    Transforms.resize((32*4, 84*4)),
+                    Transforms.resize((50*4, 52*4)),
                     Transforms.binarize(155, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
                 ], gray_transformed_corner, log_level=self.log_level)
 
@@ -248,7 +262,7 @@ class Vision:
                     self.imshow(binarized_transformed_corner)
                     print_template_matches_table(get_templates_matches(binarized_transformed_corner))
 
-                pile_contents.append(name_to_sign[get_best_template(binarized_transformed_corner)])
+                pile_contents.append(name_to_sign[get_best_template(binarized_transformed_corner, self.scale)])
 
             piles_contents.append(pile_contents)
 

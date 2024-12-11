@@ -69,7 +69,7 @@ def four_point_transform(image, pts):
     return warped
 
 
-order = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+order = ['?', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 
 rank_to_points = {
     'K': 10,
@@ -84,6 +84,7 @@ rank_to_points = {
     '4': 4,
     '3': 3,
     '2': 2,
+    '?': 0,
 }
 
 

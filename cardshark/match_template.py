@@ -26,6 +26,7 @@ name_to_sign = {
     'Four': '4',
     'Three': '3',
     'Two': '2',
+    'Hidden': '?',
 }
 
 name_to_points = {
@@ -42,6 +43,7 @@ name_to_points = {
     'Four': 4,
     'Three': 3,
     'Two': 2,
+    'Hidden': 0,
 }
 
 
@@ -62,8 +64,13 @@ def get_templates_matches(card_corner):
     return sorted([[name, *match_template(card_corner, template)] for name, template in templates.items()],key=lambda x: x[1], reverse=True)
 
 
-def get_best_template(card_corner):
-    return sorted([[name, *match_template(card_corner, template)] for name, template in templates.items()],key=lambda x: x[1], reverse=True)[0][0]
+def get_best_template(card_corner, scale: float = 1.):
+    template_matches = get_templates_matches(card_corner)
+
+    if not template_matches[0][1] > 0.55 - scale / 10:
+        return 'Hidden'
+
+    return template_matches[0][0]
 
 
 def print_template_matches_table(templates_matches):
