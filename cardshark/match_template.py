@@ -66,9 +66,10 @@ def get_templates_matches(card_corner):
 
 def get_best_template(card_corner, scale: float = 1.):
     template_matches = get_templates_matches(card_corner)
+    best_similarity = template_matches[0][1]
 
-    if not template_matches[0][1] > 0.55 - scale / 10:
-        return 'Hidden'
+    # if best_similarity <= 0.45 + scale / 10:
+    #     return 'Hidden'
 
     return template_matches[0][0]
 

@@ -172,7 +172,6 @@ class Vision:
 
         top_right_corner = max(points.tolist(), key=lambda point: point[0] - point[1])
         index = points.tolist().index(top_right_corner)
-
         points = np.roll(points, -index, axis=0)
 
         if self.log_level == 'ALL':
@@ -196,7 +195,6 @@ class Vision:
                 cv2.line(display, point_2_b, intersection, color=(255, 0, 0), thickness=10)
 
         if self.log_level == 'ALL':
-
             self.imshow(display)
 
         return pile_image
@@ -248,14 +246,14 @@ class Vision:
                     Transforms.resize((200, 300)),
                 ], transformed, log_level=self.log_level)
 
-                gray_transformed_corner = gray_transformed[0:52, 4:54]
+                gray_transformed_corner = gray_transformed[0:52, 5:55]
 
                 if self.log_level == 'ALL':
                     self.imshow(gray_transformed_corner)
 
                 binarized_transformed_corner = self.sequential([
                     Transforms.resize((50*4, 52*4)),
-                    Transforms.binarize(155, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+                    Transforms.binarize(0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
                 ], gray_transformed_corner, log_level=self.log_level)
 
                 if self.log_level == 'ALL':
