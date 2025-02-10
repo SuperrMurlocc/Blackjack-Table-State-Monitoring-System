@@ -16,7 +16,6 @@ The project relies on **classical image processing algorithms** rather than neur
 - [Results](#results)  
 - [Limitations and Future Work](#limitations-and-future-work)  
 - [Contributors](#contributors)  
-- [How to Run](#how-to-run)  
 
 ---
 
@@ -76,9 +75,9 @@ Sample images and templates were created for card recognition using template mat
 ---
 
 ## Results  
-The system achieved **100% accuracy** for full-resolution images and **96.875% accuracy** for images scaled down by 50%. The processing time for one image is approximately **0.31 seconds**, making it suitable for real-time applications.  
+The system achieved **100% accuracy** for full-resolution images and **96.875% accuracy** for images scaled down 4 times. The processing time for one image is approximately **0.31 seconds**, making it suitable for real-time applications.  
 
-| Image Scale | Exact Accuracy | Positional Accuracy | Average Processing Time |  
+| Width and Height Scale | Exact Accuracy | Positional Accuracy | Average Processing Time |  
 |-------------|----------------|---------------------|-------------------------|  
 | 1.0         | 100%           | 100%               | 0.310 s                |  
 | 0.75        | 100%           | 100%               | 0.283 s                |  
@@ -102,18 +101,6 @@ Future improvements could focus on enhancing robustness against low-quality imag
 - **Hubert Woziński** – Software Development, Investigation  
 
 ---
-
-## How to Run  
-1. Clone the repository:  
-   ```bash
-   git clone https://github.com/SuperrMurlocc/aoc-projekt.git
-   cd aoc-projekt
-   ```
-2.	Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Run the `card_shark.ipynb` file.
 
 ## License
 This project is licensed under the MIT License.
