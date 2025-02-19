@@ -100,8 +100,3 @@ Future improvements could focus on enhancing robustness against low-quality imag
 - **Julia Komorowska** – Software Development, Investigation  
 - **Hubert Woziński** – Software Development, Investigation  
 
----
-
-## License
-This project is licensed under the MIT License.
-
